@@ -1,0 +1,43 @@
+=pod
+
+=head1 NAME
+
+Path::ls - List the contents of a directory
+
+=head1 SYNOPSIS
+
+  use Path::ls;
+  
+  print "$_\n" for ls '.';
+  
+  print "$_\n" for ls '/foo/bar', {all => 1, sort => 'time'};
+
+=head1 DESCRIPTION
+
+=head1 FUNCTIONS
+
+=head2 ls
+
+  my @contents = ls $path, \%options;
+
+=head1 BUGS
+
+Report any issues on the public bugtracker.
+
+=head1 AUTHOR
+
+Dan Book <dbook@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2017 by Dan Book.
+
+This is free software, licensed under:
+
+  The Artistic License 2.0 (GPL Compatible)
+
+=head1 SEE ALSO
+
+L<Path::Tiny>
+
+=cut
