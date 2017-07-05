@@ -12,7 +12,7 @@
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : 2
    },
-   "name" : "Path-ls",
+   "name" : "Dir-ls",
    "no_index" : {
       "directory" : [
          "eg",
@@ -55,21 +55,21 @@
       }
    },
    "provides" : {
-      "Path::ls" : {
-         "file" : "lib/Path/ls.pm",
+      "Dir::ls" : {
+         "file" : "lib/Dir/ls.pm",
          "version" : "0.001"
       }
    },
    "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
-         "web" : "https://github.com/Grinnz/Path-ls/issues"
+         "web" : "https://github.com/Grinnz/Dir-ls/issues"
       },
-      "homepage" : "https://github.com/Grinnz/Path-ls",
+      "homepage" : "https://github.com/Grinnz/Dir-ls",
       "repository" : {
          "type" : "git",
-         "url" : "https://github.com/Grinnz/Path-ls.git",
-         "web" : "https://github.com/Grinnz/Path-ls"
+         "url" : "https://github.com/Grinnz/Dir-ls.git",
+         "web" : "https://github.com/Grinnz/Dir-ls"
       }
    },
    "version" : "0.001",

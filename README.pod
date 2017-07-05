@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-Path::ls - List the contents of a directory
+Dir::ls - List the contents of a directory
 
 =head1 SYNOPSIS
 
-  use Path::ls;
+  use Dir::ls;
   
   print "$_\n" for ls '.';
   
@@ -18,7 +18,7 @@ Path::ls - List the contents of a directory
 
 =head2 ls
 
-  my @contents = ls $path, \%options;
+  my @contents = ls $dir, \%options;
 
 =head1 BUGS
 

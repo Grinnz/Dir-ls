@@ -12,10 +12,10 @@ my %WriteMakefileArgs = (
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0
   },
-  "DISTNAME" => "Path-ls",
+  "DISTNAME" => "Dir-ls",
   "LICENSE" => "artistic_2",
   "MIN_PERL_VERSION" => "5.006",
-  "NAME" => "Path::ls",
+  "NAME" => "Dir::ls",
   "PREREQ_PM" => {
     "Carp" => 0,
     "Exporter" => "5.57"

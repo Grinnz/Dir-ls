@@ -1,4 +1,4 @@
-package Path::ls;
+package Dir::ls;
 
 use strict;
 use warnings;
@@ -10,11 +10,11 @@ our $VERSION = '0.001';
 our @EXPORT = 'ls';
 
 sub ls {
-  my ($path, $options) = @_;
+  my ($dir, $options) = @_;
   $options ||= {};
-  opendir my $dh, $path or croak "Failed to open directory '$path': $!";
+  opendir my $dh, $dir or croak "Failed to open directory '$dir': $!";
   my @entries = readdir $dh;
-  closedir $dh or croak "Failed to close directory '$path': $!";
+  closedir $dh or croak "Failed to close directory '$dir': $!";
   
   unless ($options->{a} or $options->{all} or $options->{f}) {
     if ($options->{A} or $options->{'almost-all'}) {
@@ -31,10 +31,10 @@ sub ls {
     @entries = @entries[sort { $names[$a] cmp $names[$b] or $entries[$a] cmp $entries[$b] } 0..$#entries];
     
     if ($options->{S} or $options->{sort} eq 'size') {
-      my @sizes = map { _stat($path, $_, 7) } @entries;
+      my @sizes = map { _stat($dir, $_, 7) } @entries;
       @entries = @entries[sort { $sizes[$a] <=> $sizes[$b] } 0..$#entries];
     } elsif ($options->{t} or $options->{sort} eq 'time') {
-      my @mtimes = map { _stat($path, $_, 9) } @entries;
+      my @mtimes = map { _stat($dir, $_, 9) } @entries;
       @entries = @entries[sort { $mtimes[$a] <=> $mtimes[$b] } 0..$#entries];
     } elsif ($options->{v} or $options->{sort} eq 'version') {
       # TODO: sort as in filevercmp
@@ -42,10 +42,10 @@ sub ls {
       my @extensions = map { lc _ext($_) } @entries;
       @entries = @entries[sort { $extensions[$a] cmp $extensions[$b] } 0..$#entries];
     } elsif ($options->{c}) {
-      my @ctimes = map { _stat($path, $_, 10) } @entries;
+      my @ctimes = map { _stat($dir, $_, 10) } @entries;
       @entries = @entries[sort { $ctimes[$a] <=> $ctimes[$b] } 0..$#entries];
     } elsif ($options->{u}) {
-      my @atimes = map { _stat($path, $_, 8) } @entries;
+      my @atimes = map { _stat($dir, $_, 8) } @entries;
       @entries = @entries[sort { $atimes[$a] <=> $atimes[$b] } 0..$#entries];
     } elsif (length $options->{sort}) {
       croak "Unknown sort option '$options->{sort}'; must be 'none', 'size', 'time', 'version', or 'extension'";
@@ -56,9 +56,9 @@ sub ls {
 }
 
 sub _stat {
-  my ($path, $entry, $index) = @_;
-  my @stat = stat "$path/$entry";
-  croak "Failed to stat '$path/$entry': $!" unless @stat;
+  my ($dir, $entry, $index) = @_;
+  my @stat = stat "$dir/$entry";
+  croak "Failed to stat '$dir/$entry': $!" unless @stat;
   return $stat[$index];
 }
 
@@ -80,11 +80,11 @@ sub _name {
 
 =head1 NAME
 
-Path::ls - List the contents of a directory
+Dir::ls - List the contents of a directory
 
 =head1 SYNOPSIS
 
-  use Path::ls;
+  use Dir::ls;
   
   print "$_\n" for ls '.';
   
@@ -96,7 +96,7 @@ Path::ls - List the contents of a directory
 
 =head2 ls
 
-  my @contents = ls $path, \%options;
+  my @contents = ls $dir, \%options;
 
 =head1 BUGS
 
