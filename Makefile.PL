@@ -18,7 +18,8 @@ my %WriteMakefileArgs = (
   "NAME" => "Dir::ls",
   "PREREQ_PM" => {
     "Carp" => 0,
-    "Exporter" => "5.57"
+    "Exporter" => "5.57",
+    "Path::Tiny" => "0.017"
   },
   "TEST_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0,
@@ -37,6 +38,7 @@ my %FallbackPrereqs = (
   "Exporter" => "5.57",
   "ExtUtils::MakeMaker" => 0,
   "File::Spec" => 0,
+  "Path::Tiny" => "0.017",
   "Test::More" => 0
 );
 

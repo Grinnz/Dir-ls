@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Carp 'croak';
 use Exporter 'import';
+use Path::Tiny 'path';
 
 our $VERSION = '0.001';
 
@@ -12,7 +13,10 @@ our @EXPORT = 'ls';
 sub ls {
   my ($dir, $options) = @_;
   $options ||= {};
-  opendir my $dh, $dir or croak "Failed to open directory '$dir': $!";
+  
+  $dir = path($dir); # do glob expansion
+  
+  opendir my $dh, "$dir" or croak "Failed to open directory '$dir': $!";
   my @entries = readdir $dh;
   closedir $dh or croak "Failed to close directory '$dir': $!";
   
@@ -57,7 +61,7 @@ sub ls {
 
 sub _stat {
   my ($dir, $entry, $index) = @_;
-  my @stat = stat "$dir/$entry";
+  my @stat = stat $dir->child($entry);
   croak "Failed to stat '$dir/$entry': $!" unless @stat;
   return $stat[$index];
 }
