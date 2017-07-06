@@ -20,6 +20,7 @@ my %WriteMakefileArgs = (
     "Carp" => 0,
     "Exporter" => "5.57",
     "Path::Tiny" => "0.017",
+    "locale" => 0,
     "sort" => 0
   },
   "TEST_REQUIRES" => {
@@ -41,6 +42,7 @@ my %FallbackPrereqs = (
   "File::Spec" => 0,
   "Path::Tiny" => "0.017",
   "Test::More" => "0.88",
+  "locale" => 0,
   "sort" => 0
 );
 

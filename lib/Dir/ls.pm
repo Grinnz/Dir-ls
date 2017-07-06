@@ -33,9 +33,8 @@ sub ls {
   unless ($options->{U} or $options->{sort} eq 'none' or $options->{f}) {
     # pre-sort by name
     my @names = map { _name($_) } @entries;
-    # this is weird, but emulates the standard collation where lowercase sorts before uppercase in a case insensitive match
-    @entries = @entries[sort { lc $names[$a] cmp lc $names[$b] or $names[$b] cmp $names[$a]
-      or lc $entries[$a] cmp lc $entries[$b] or $entries[$b] cmp $entries[$a] } 0..$#entries];
+    use locale;
+    @entries = @entries[sort { $names[$a] cmp $names[$b] or $entries[$a] cmp $entries[$b] } 0..$#entries];
     
     if ($options->{S} or $options->{sort} eq 'size') {
       my @sizes = map { _stat($dir, $_, 7) } @entries;
@@ -47,7 +46,8 @@ sub ls {
       # TODO: sort as in filevercmp
     } elsif ($options->{X} or $options->{sort} eq 'extension') {
       my @extensions = map { _ext($_) } @entries;
-      @entries = @entries[sort { lc $extensions[$a] cmp lc $extensions[$b] or $extensions[$b] cmp $extensions[$a] } 0..$#entries];
+      use locale;
+      @entries = @entries[sort { $extensions[$a] cmp $extensions[$b] } 0..$#entries];
     } elsif ($options->{c}) {
       my @ctimes = map { _stat($dir, $_, 10) } @entries;
       @entries = @entries[sort { $ctimes[$a] <=> $ctimes[$b] } 0..$#entries];
