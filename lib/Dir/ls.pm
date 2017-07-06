@@ -7,7 +7,7 @@ use Exporter 'import';
 use Path::Tiny 'path';
 use sort 'stable';
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 our @EXPORT = 'ls';
 
