@@ -40,7 +40,7 @@
          "requires" : {
             "Carp" : "0",
             "Exporter" : "5.57",
-            "Path::Tiny" : "0.017",
+            "Path::Tiny" : "0.097",
             "locale" : "0",
             "perl" : "5.008001",
             "sort" : "0"
@@ -81,25 +81,6 @@
          "version" : "5.026000"
       },
       "plugins" : [
-         {
-            "class" : "Dist::Zilla::Plugin::Git::GatherDir",
-            "config" : {
-               "Dist::Zilla::Plugin::GatherDir" : {
-                  "exclude_filename" : [],
-                  "exclude_match" : [],
-                  "follow_symlinks" : 0,
-                  "include_dotfiles" : 1,
-                  "prefix" : "t/testdir",
-                  "prune_directory" : [],
-                  "root" : "t/testdir"
-               },
-               "Dist::Zilla::Plugin::Git::GatherDir" : {
-                  "include_untracked" : 0
-               }
-            },
-            "name" : "GatherTestFiles",
-            "version" : "2.042"
-         },
          {
             "class" : "Dist::Zilla::Plugin::GithubMeta",
             "name" : "@Author::DBOOK/GithubMeta",
@@ -386,9 +367,7 @@
                      "Makefile.PL",
                      "Makefile.PL"
                   ],
-                  "exclude_match" : [
-                     "^t/testdir"
-                  ],
+                  "exclude_match" : [],
                   "follow_symlinks" : 0,
                   "include_dotfiles" : 0,
                   "prefix" : "",
