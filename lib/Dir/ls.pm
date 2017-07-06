@@ -196,10 +196,13 @@ similar manner to the GNU coreutils command L<ls(1)>.
 
 Takes a directory path and optional hashref of options, and returns a list of
 items in the directory. Like in L<ls(1)>, the returned names are relative to
-the passed directory path, so if you want to use a file or directory in the
-result, you should prefix it with the directory path that was passed. By
-default, hidden files and directories (entries starting with C<.>) are omitted,
-and the results are sorted by name according to the current locale.
+the passed directory path, so if you want to use a filename (such as passing it
+to C<open> or C<stat>), you must prefix it with the directory path that was
+passed.
+
+By default, hidden files and directories (those starting with C<.>) are
+omitted, and the results are sorted by name according to the current locale
+(see L<perllocale> for more information).
 
 Accepts the following options:
 
@@ -256,12 +259,13 @@ C<< sort => 'none' >>.
 
 =item v
 
-Sort naturally by version numbers within text. Equivalent to
-C<< sort => 'version' >>.
+Sort naturally by version numbers within the name. This sort algorithm ignores
+the current locale. Equivalent to C<< sort => 'version' >>.
 
 =item X
 
-Sort by (last) file extenion. Equivalent to C<< sort => 'extension' >>.
+Sort by (last) file extension, according to the current locale. Equivalent to
+C<< sort => 'extension' >>.
 
 =back
 
