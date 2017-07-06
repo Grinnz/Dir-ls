@@ -27,8 +27,12 @@ Takes a directory path and optional hashref of options, and returns a list of
 items in the directory. Home directories represented by C<~> will be expanded
 by L<Path::Tiny/"path">. Like in L<ls(1)>, the returned names are relative to
 the passed directory path, so if you want to use a filename (such as passing it
-to C<open> or C<stat>), you must prefix it with the directory path that was
-passed.
+to C<open> or C<stat>), you must prefix it with the directory path, with C<~>
+expanded if present.
+
+  # Check the size of a file in current user's home directory
+  my @contents = ls '~';
+  say -s glob('~') . "/$contents[0]";
 
 By default, hidden files and directories (those starting with C<.>) are
 omitted, and the results are sorted by name according to the current locale
