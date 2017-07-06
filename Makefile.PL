@@ -24,7 +24,7 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0,
     "File::Spec" => 0,
-    "Test::More" => 0
+    "Test::More" => "0.88"
   },
   "VERSION" => "0.001",
   "test" => {
@@ -39,7 +39,7 @@ my %FallbackPrereqs = (
   "ExtUtils::MakeMaker" => 0,
   "File::Spec" => 0,
   "Path::Tiny" => "0.017",
-  "Test::More" => 0
+  "Test::More" => "0.88"
 );
 
 
