@@ -93,8 +93,8 @@ C<< sort => 'none' >>.
 
 =item v
 
-Sort naturally by version numbers within the name. This sort algorithm ignores
-the current locale. Equivalent to C<< sort => 'version' >>.
+Sort naturally by version numbers within the name. Uses L<Sort::filevercmp>
+for sorting. Equivalent to C<< sort => 'version' >>.
 
 =item X
 

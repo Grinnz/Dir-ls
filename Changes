@@ -1,4 +1,5 @@
 {{$NEXT}}
+  - Split version sorting out to Sort::filevercmp
 
 0.001     2017-07-06 11:33:31 EDT
   - First release

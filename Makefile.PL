@@ -20,6 +20,7 @@ my %WriteMakefileArgs = (
     "Carp" => 0,
     "Exporter" => "5.57",
     "Path::Tiny" => "0.097",
+    "Sort::filevercmp" => 0,
     "locale" => 0,
     "sort" => 0
   },
@@ -28,7 +29,7 @@ my %WriteMakefileArgs = (
     "File::Spec" => 0,
     "Test::More" => "0.88"
   },
-  "VERSION" => "0.001",
+  "VERSION" => "0.002",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -41,6 +42,7 @@ my %FallbackPrereqs = (
   "ExtUtils::MakeMaker" => 0,
   "File::Spec" => 0,
   "Path::Tiny" => "0.097",
+  "Sort::filevercmp" => 0,
   "Test::More" => "0.88",
   "locale" => 0,
   "sort" => 0
