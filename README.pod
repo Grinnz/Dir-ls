@@ -48,16 +48,22 @@ Include hidden files and directories, but not C<.> or C<..>.
 
 =item c
 
-Sort by ctime in seconds since the epoch.
+Sort by ctime (change time) in seconds since the epoch.
 
 =item f
 
 Equivalent to passing C<all> and setting C<sort> to C<none>.
 
+=item r
+
+=item reverse
+
+Reverse sort order (unless C<U> or C<< sort => 'none' >> specified).
+
 =item sort
 
-Specify sort algorithm. Valid values are: C<none>, C<extension>, C<size>,
-C<time>, or C<version>.
+Specify sort algorithm other than the default sort-by-name. Valid values are:
+C<none>, C<extension>, C<size>, C<time>, or C<version>.
 
 =item S
 
@@ -65,15 +71,16 @@ Sort by file size in bytes (descending). Equivalent to C<< sort => 'size' >>.
 
 =item t
 
-Sort by mtime in seconds since the epoch. Equivalent to C<< sort => 'time' >>.
+Sort by mtime (modification time) in seconds since the epoch. Equivalent to
+C<< sort => 'time' >>.
 
 =item u
 
-Sort by atime in seconds since the epoch.
+Sort by atime (access time) in seconds since the epoch.
 
 =item U
 
-Return entries in filesystem order (unsorted). Equivalent to
+Return entries in directory order (unsorted). Equivalent to
 C<< sort => 'none' >>.
 
 =item v
@@ -84,6 +91,8 @@ C<< sort => 'version' >>.
 =item X
 
 Sort by (last) file extenion. Equivalent to C<< sort => 'extension' >>.
+
+=back
 
 =head1 CAVEATS
 

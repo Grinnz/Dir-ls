@@ -68,4 +68,7 @@ $testdir->child($_)->touch for @testfiles;
 my @by_version_list = ls $testdir, {all => 1, sort => 'version'};
 is_deeply \@by_version_list, ['.', '..', @testfiles], 'version sorted list correct';
 
+my @reverse_version_list = ls $testdir, {all => 1, sort => 'version', reverse => 1};
+is_deeply \@reverse_version_list, [reverse '.', '..', @testfiles], 'reverse version sorted list correct';
+
 done_testing;

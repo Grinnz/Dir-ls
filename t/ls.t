@@ -24,6 +24,11 @@ is_deeply \@default_list,
   [qw(test1  test2.foo.tar  TEST3  test3.bar  test4.TXT  test5  Test_6.Txt  test7.out  test8.jpg  test.d)],
   'default list correct';
 
+my @reverse_list = ls $testdir, {reverse => 1};
+is_deeply \@reverse_list,
+  [qw(test.d  test8.jpg  test7.out  Test_6.Txt  test5  test4.TXT  test3.bar  TEST3  test2.foo.tar  test1)],
+  'reverse list correct';
+
 my @almost_all_list = ls $testdir, {'almost-all' => 1};
 is_deeply \@almost_all_list,
   [qw(test1  test2.foo.tar  TEST3  test3.bar  test4.TXT  test5  .test5.log  Test_6.Txt  test7.out  test8.jpg  test.d)],
