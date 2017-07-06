@@ -4,6 +4,8 @@ use Dir::ls;
 use Path::Tiny 'path';
 use Test::More;
 
+local $ENV{LC_COLLATE} = 'en_US.utf8';
+
 my $testdir = path(__FILE__)->absolute->sibling('testdir');
 
 my @default_list = ls $testdir;

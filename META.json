@@ -82,6 +82,25 @@
       },
       "plugins" : [
          {
+            "class" : "Dist::Zilla::Plugin::Git::GatherDir",
+            "config" : {
+               "Dist::Zilla::Plugin::GatherDir" : {
+                  "exclude_filename" : [],
+                  "exclude_match" : [],
+                  "follow_symlinks" : 0,
+                  "include_dotfiles" : 1,
+                  "prefix" : "t/testdir",
+                  "prune_directory" : [],
+                  "root" : "t/testdir"
+               },
+               "Dist::Zilla::Plugin::Git::GatherDir" : {
+                  "include_untracked" : 0
+               }
+            },
+            "name" : "GatherTestFiles",
+            "version" : "2.042"
+         },
+         {
             "class" : "Dist::Zilla::Plugin::GithubMeta",
             "name" : "@Author::DBOOK/GithubMeta",
             "version" : "0.54"
@@ -367,7 +386,9 @@
                      "Makefile.PL",
                      "Makefile.PL"
                   ],
-                  "exclude_match" : [],
+                  "exclude_match" : [
+                     "^t/testdir"
+                  ],
                   "follow_symlinks" : 0,
                   "include_dotfiles" : 0,
                   "prefix" : "",

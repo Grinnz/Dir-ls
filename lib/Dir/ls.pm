@@ -31,10 +31,12 @@ sub ls {
   
   local $options->{sort} = '' unless defined $options->{sort};
   unless ($options->{U} or $options->{sort} eq 'none' or $options->{f}) {
-    # pre-sort by name
-    my @names = map { _name($_) } @entries;
-    use locale;
-    @entries = @entries[sort { $names[$a] cmp $names[$b] or $entries[$a] cmp $entries[$b] } 0..$#entries];
+    {
+      # pre-sort by alphanumeric then full name
+      my @alnum = map { _alnum($_) } @entries;
+      use locale ':collate';
+      @entries = @entries[sort { $alnum[$a] cmp $alnum[$b] or $entries[$a] cmp $entries[$b] } 0..$#entries];
+    }
     
     if ($options->{S} or $options->{sort} eq 'size') {
       my @sizes = map { _stat($dir, $_, 7) } @entries;
@@ -46,7 +48,7 @@ sub ls {
       # TODO: sort as in filevercmp
     } elsif ($options->{X} or $options->{sort} eq 'extension') {
       my @extensions = map { _ext($_) } @entries;
-      use locale;
+      use locale ':collate';
       @entries = @entries[sort { $extensions[$a] cmp $extensions[$b] } 0..$#entries];
     } elsif ($options->{c}) {
       my @ctimes = map { _stat($dir, $_, 10) } @entries;
@@ -77,7 +79,7 @@ sub _ext {
   return $ext;
 }
 
-sub _name {
+sub _alnum {
   my ($entry) = @_;
   # Only consider alphabetic, numeric, and blank characters (space + tab)
   $entry =~ tr/a-zA-Z0-9 \t//cd;
