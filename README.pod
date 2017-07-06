@@ -24,7 +24,8 @@ similar manner to the GNU coreutils command L<ls(1)>.
   my @contents = ls $dir, \%options;
 
 Takes a directory path and optional hashref of options, and returns a list of
-items in the directory. Like in L<ls(1)>, the returned names are relative to
+items in the directory. Home directories represented by C<~> will be expanded
+by L<Path::Tiny/"path">. Like in L<ls(1)>, the returned names are relative to
 the passed directory path, so if you want to use a filename (such as passing it
 to C<open> or C<stat>), you must prefix it with the directory path that was
 passed.
