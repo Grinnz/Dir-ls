@@ -34,7 +34,7 @@ sub ls {
     {
       # pre-sort by alphanumeric then full name
       my @alnum = map { _alnum_sorter($_) } @entries;
-      use locale ':collate';
+      use locale;
       @entries = @entries[sort { $alnum[$a] cmp $alnum[$b] or $entries[$a] cmp $entries[$b] } 0..$#entries];
     }
     
@@ -65,7 +65,7 @@ sub ls {
       } 0..$#entries];
     } elsif ($options->{X} or $options->{sort} eq 'extension') {
       my @extensions = map { _ext_sorter($_) } @entries;
-      use locale ':collate';
+      use locale;
       @entries = @entries[sort { $extensions[$a] cmp $extensions[$b] } 0..$#entries];
     } elsif ($options->{t} or $options->{sort} eq 'time') {
       my @mtimes = map { _stat_sorter($dir, $_, 9) } @entries;
