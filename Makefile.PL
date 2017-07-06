@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use 5.006;
+use 5.008001;
 
 use ExtUtils::MakeMaker;
 
@@ -14,12 +14,13 @@ my %WriteMakefileArgs = (
   },
   "DISTNAME" => "Dir-ls",
   "LICENSE" => "artistic_2",
-  "MIN_PERL_VERSION" => "5.006",
+  "MIN_PERL_VERSION" => "5.008001",
   "NAME" => "Dir::ls",
   "PREREQ_PM" => {
     "Carp" => 0,
     "Exporter" => "5.57",
-    "Path::Tiny" => "0.017"
+    "Path::Tiny" => "0.017",
+    "sort" => 0
   },
   "TEST_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0,
@@ -39,7 +40,8 @@ my %FallbackPrereqs = (
   "ExtUtils::MakeMaker" => 0,
   "File::Spec" => 0,
   "Path::Tiny" => "0.017",
-  "Test::More" => "0.88"
+  "Test::More" => "0.88",
+  "sort" => 0
 );
 
 
