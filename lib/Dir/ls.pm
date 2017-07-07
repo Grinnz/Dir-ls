@@ -8,7 +8,7 @@ use Path::Tiny 'path';
 use Sort::filevercmp 'fileversort';
 use sort 'stable';
 
-our $VERSION = '0.003';
+our $VERSION = '0.004';
 
 our @EXPORT = 'ls';
 
