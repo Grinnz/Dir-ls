@@ -10,3 +10,6 @@ perl:
   - "5.12"
   - "5.10"
   - "5.8"
+env:
+  - LC_COLLATE=en_US.UTF-8
+  - LC_COLLATE=C
