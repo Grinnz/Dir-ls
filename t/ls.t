@@ -2,9 +2,9 @@ use strict;
 use warnings;
 use Dir::ls;
 use Path::Tiny 'tempdir';
+use Sort::filevercmp;
 use Test::More;
-
-local $ENV{LC_COLLATE} = 'en_US.utf8';
+use sort 'stable';
 
 my $testdir = tempdir;
 
@@ -18,40 +18,42 @@ my %testcontents = (
 $testdir->child($_)->touch for @testfiles;
 $testdir->child($_)->spew($testcontents{$_}) for grep { exists $testcontents{$_} } @testfiles;
 $testdir->child('test.d')->mkpath;
+$testcontents{'test.d'} = 'a'x(-s $testdir->child('test.d')); # for later size check
+
+my (@sorted_byname, @sorted_byext);
+{
+  use locale;
+  # Test locale-sensitive sorting
+  @sorted_byname = sort { Dir::ls::_alnum_sorter($a) cmp Dir::ls::_alnum_sorter($b) or $a cmp $b } @testfiles, 'test.d', '.', '..';
+  @sorted_byext = sort { Dir::ls::_ext_sorter($a) cmp Dir::ls::_ext_sorter($b) } @sorted_byname;
+}
 
 my @default_list = ls $testdir;
-is_deeply \@default_list,
-  [qw(test1  test2.foo.tar  TEST3  test3.bar  test4.TXT  test5  Test_6.Txt  test7.out  test8.jpg  test.d)],
-  'default list correct';
+my @default_sort = grep { !m/^\./ } @sorted_byname;
+is_deeply \@default_list, \@default_sort, 'default list correct';
 
 my @reverse_list = ls $testdir, {reverse => 1};
-is_deeply \@reverse_list,
-  [qw(test.d  test8.jpg  test7.out  Test_6.Txt  test5  test4.TXT  test3.bar  TEST3  test2.foo.tar  test1)],
-  'reverse list correct';
+my @reverse_sort = reverse grep { !m/^\./ } @sorted_byname;
+is_deeply \@reverse_list, \@reverse_sort, 'reverse list correct';
 
 my @almost_all_list = ls $testdir, {'almost-all' => 1};
-is_deeply \@almost_all_list,
-  [qw(test1  test2.foo.tar  TEST3  test3.bar  test4.TXT  test5  .test5.log  Test_6.Txt  test7.out  test8.jpg  test.d)],
-  'almost-all list correct';
+my @almost_all_sort = grep { !m/^\.\.?$/ } @sorted_byname;
+is_deeply \@almost_all_list, \@almost_all_sort, 'almost-all list correct';
 
 my @all_list = ls $testdir, {all => 1};
-is_deeply \@all_list,
-  [qw(.  ..  test1  test2.foo.tar  TEST3  test3.bar  test4.TXT  test5  .test5.log  Test_6.Txt  test7.out  test8.jpg  test.d)],
-  'all list correct';
+my @all_sort = @sorted_byname;
+is_deeply \@all_list, \@all_sort, 'all list correct';
 
 my @by_ext_list = ls $testdir, {'almost-all' => 1, sort => 'extension'};
-is_deeply \@by_ext_list,
-  [qw(test1  TEST3  test5  test3.bar  test.d  test8.jpg  .test5.log  test7.out  test2.foo.tar  Test_6.Txt  test4.TXT)],
-  'extension sorted list correct';
+my @by_ext_sort = grep { !m/^\.\.?$/ } @sorted_byext;
+is_deeply \@by_ext_list, \@by_ext_sort, 'extension sorted list correct';
 
 my @by_size_list = ls $testdir, {'almost-all' => 1, sort => 'size'};
-is_deeply \@by_size_list,
-  [qw(test.d  TEST3  test3.bar  test5  test1  test2.foo.tar  test4.TXT  .test5.log  Test_6.Txt  test7.out  test8.jpg)],
-  'size sorted list correct';
+my @by_size_sort = sort { length($testcontents{$b}||'') <=> length($testcontents{$a}||'') } grep { !m/^\.\.?$/ } @sorted_byname;
+is_deeply \@by_size_list, \@by_size_sort, 'size sorted list correct';
 
 my @by_version_list = ls $testdir, {'almost-all' => 1, sort => 'version'};
-is_deeply \@by_version_list,
-  [qw(.test5.log  TEST3  Test_6.Txt  test.d  test1  test2.foo.tar  test3.bar  test4.TXT  test5  test7.out  test8.jpg)],
-  'version sorted list correct';
+my @by_version_sort = sort filevercmp @testfiles, 'test.d';
+is_deeply \@by_version_list, \@by_version_sort, 'version sorted list correct';
 
 done_testing;

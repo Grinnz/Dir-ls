@@ -1,4 +1,5 @@
 {{$NEXT}}
+  - Fix tests to work correctly in different locales
 
 0.002     2017-07-06 15:55:48 EDT
   - Split version sorting out to Sort::filevercmp
