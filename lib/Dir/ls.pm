@@ -13,7 +13,12 @@ our $VERSION = '0.004';
 our @EXPORT = 'ls';
 
 sub ls {
-  my ($dir, $options) = @_;
+  my ($dir, $options);
+  if (ref $_[0] eq 'HASH') {
+    ($options) = @_;
+  } else {
+    ($dir, $options) = @_;
+  }
   $dir = '.' unless defined $dir and length $dir;
   $options ||= {};
   

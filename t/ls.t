@@ -44,6 +44,13 @@ my @reverse_list = ls $testdir, {reverse => 1};
 my @reverse_sort = reverse grep { !m/^\./ } @sorted_byname;
 is_deeply \@reverse_list, \@reverse_sort, 'reverse list correct';
 
+{
+  local $CWD = $testdir;
+  my @cwd_reverse_list = ls {reverse => 1};
+  my @cwd_reverse_sort = reverse grep { !m/^\./ } @sorted_byname;
+  is_deeply \@cwd_reverse_list, \@cwd_reverse_sort, 'cwd reverse list correct';
+}
+
 my @almost_all_list = ls $testdir, {'almost-all' => 1};
 my @almost_all_sort = grep { !m/^\.\.?$/ } @sorted_byname;
 is_deeply \@almost_all_list, \@almost_all_sort, 'almost-all list correct';
