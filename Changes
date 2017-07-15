@@ -1,4 +1,5 @@
 {{$NEXT}}
+  - Default to current working directory if no directory passed
 
 0.003     2017-07-07 15:03:57 EDT
   - Fix tests to work correctly in different locales
