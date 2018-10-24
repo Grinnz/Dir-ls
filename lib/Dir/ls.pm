@@ -9,7 +9,7 @@ use Path::ExpandTilde;
 use Sort::filevercmp 'fileversort';
 use sort 'stable';
 
-our $VERSION = '0.005';
+our $VERSION = '0.006';
 
 our @EXPORT = 'ls';
 
