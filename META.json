@@ -40,8 +40,8 @@
          "requires" : {
             "Carp" : "0",
             "Exporter" : "5.57",
-            "File::Glob" : "0",
             "File::Spec" : "0",
+            "Path::ExpandTilde" : "0",
             "Sort::filevercmp" : "0",
             "locale" : "0",
             "perl" : "5.008001",
@@ -53,7 +53,6 @@
             "CPAN::Meta" : "2.120900"
          },
          "requires" : {
-            "Cwd" : "0",
             "ExtUtils::MakeMaker" : "0",
             "File::Spec" : "0",
             "File::Temp" : "0",
