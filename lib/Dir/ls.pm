@@ -24,19 +24,19 @@ sub ls {
   $options ||= {};
 
   $dir = expand_tilde($dir); # do homedir expansion
-  
+
   opendir my $dh, $dir or croak "Failed to open directory '$dir': $!";
   my @entries = readdir $dh;
   closedir $dh or croak "Failed to close directory '$dir': $!";
-  
-  unless ($options->{a} or $options->{all} or $options->{f}) {
-    if ($options->{A} or $options->{'almost-all'}) {
-      @entries = grep { $_ ne '.' and $_ ne '..' } @entries;
-    } else {
-      @entries = grep { !m/^\./ } @entries;
-    }
-  }
-  
+
+  my $show_all = !!($options->{a} or $options->{all} or $options->{f});
+  my $show_almost_all = !!($options->{A} or $options->{'almost-all'});
+  my $skip_backup = !!($options->{B} or $options->{'ignore-backups'});
+  @entries = grep {
+    ($show_all ? 1 : $show_almost_all ? ($_ ne '.' and $_ ne '..') : !m/^\./)
+    and ($skip_backup ? !m/~\z/ : 1)
+  } @entries;
+
   local $options->{sort} = '' unless defined $options->{sort};
   unless ($options->{U} or $options->{sort} eq 'none' or $options->{f}) {
     if ($options->{v} or $options->{sort} eq 'version') {
@@ -68,10 +68,10 @@ sub ls {
         croak "Unknown sort option '$options->{sort}'; must be 'none', 'size', 'time', 'version', or 'extension'";
       }
     }
-    
+
     @entries = reverse @entries if $options->{r} or $options->{reverse};
   }
-  
+
   return @entries;
 }
 
@@ -89,7 +89,7 @@ sub _stat_sorter {
 
 sub _ext_sorter {
   my ($entry) = @_;
-  my ($ext) = $entry =~ m/(\.[^.]*)$/;
+  my ($ext) = $entry =~ m/(\.[^.]*)\z/;
   $ext = '' unless defined $ext;
   return $ext;
 }
@@ -150,6 +150,12 @@ Include hidden files and directories.
 =item almost-all
 
 Include hidden files and directories, but not C<.> or C<..>.
+
+=item B
+
+=item ignore-backups
+
+Omit files and directories ending in C<~>.
 
 =item c
 

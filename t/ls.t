@@ -10,7 +10,7 @@ use sort 'stable';
 
 my $testdir = File::Temp->newdir;
 
-my @testfiles = qw(test1  test2.foo.tar  TEST3  test3.bar  test4.TXT  test5  .test5.log  Test_6.Txt  test7.out  test8.jpg);
+my @testfiles = qw(test1  test2.foo.tar  TEST3  test3.bar  test4.TXT  test5  test5~  .test5.log  Test_6.Txt  test7.out  test8.jpg);
 my %testcontents = (
   test1 => 'ab',
   TEST3 => 'abcde',
@@ -57,19 +57,23 @@ is_deeply \@reverse_list, \@reverse_sort, 'reverse list correct';
 }
 
 my @almost_all_list = ls $testdir, {'almost-all' => 1};
-my @almost_all_sort = grep { !m/^\.\.?$/ } @sorted_byname;
+my @almost_all_sort = grep { !m/^\.\.?\z/ } @sorted_byname;
 is_deeply \@almost_all_list, \@almost_all_sort, 'almost-all list correct';
 
 my @all_list = ls $testdir, {all => 1};
 my @all_sort = @sorted_byname;
 is_deeply \@all_list, \@all_sort, 'all list correct';
 
+my @no_backups_list = ls $testdir, {all => 1, 'ignore-backups' => 1};
+my @no_backups_sort = grep { !m/~\z/ } @sorted_byname;
+is_deeply \@no_backups_list, \@no_backups_sort, 'ignore-backups list correct';
+
 my @by_ext_list = ls $testdir, {'almost-all' => 1, sort => 'extension'};
-my @by_ext_sort = grep { !m/^\.\.?$/ } @sorted_byext;
+my @by_ext_sort = grep { !m/^\.\.?\z/ } @sorted_byext;
 is_deeply \@by_ext_list, \@by_ext_sort, 'extension sorted list correct';
 
 my @by_size_list = ls $testdir, {'almost-all' => 1, sort => 'size'};
-my @by_size_sort = sort { length($testcontents{$b}||'') <=> length($testcontents{$a}||'') } grep { !m/^\.\.?$/ } @sorted_byname;
+my @by_size_sort = sort { length($testcontents{$b}||'') <=> length($testcontents{$a}||'') } grep { !m/^\.\.?\z/ } @sorted_byname;
 is_deeply \@by_size_list, \@by_size_sort, 'size sorted list correct';
 
 my @by_version_list = ls $testdir, {'almost-all' => 1, sort => 'version'};
