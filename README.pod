@@ -10,7 +10,7 @@ Dir::ls - List the contents of a directory
   
   print "$_\n" for ls; # defaults to current working directory
   
-  print "$_: ", -s "/foo/bar/$_", "\n" for ls '/foo/bar', {all => 1, sort => 'size'};
+  print "$_: ", -s "/foo/bar/$_", "\n" for ls '/foo/bar', {-a => 1, sort => 'size'};
 
 =head1 DESCRIPTION
 
@@ -39,7 +39,7 @@ By default, hidden files and directories (those starting with C<.>) are
 omitted, and the results are sorted by name according to the current locale
 (see L<perllocale> for more information).
 
-Accepts the following options:
+Accepts the following options (any prefixed hyphens are ignored):
 
 =over 2
 
