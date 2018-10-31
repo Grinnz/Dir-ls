@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp 'croak';
 use Exporter 'import';
-use Fcntl 'S_ISDIR';
+use Fcntl ':mode';
 use File::Spec;
 use File::stat;
 use Path::ExpandTilde;
@@ -105,19 +105,52 @@ sub ls {
     }
   }
 
+  my $indicators = $options->{'indicator-style'} || '';
+  if ($indicators eq 'none') {
+    $indicators = '';
+  } elsif ($options->{p} or $indicators eq 'slash') {
+    $indicators = 'p';
+  } elsif ($indicators eq 'file-type') {
+    $indicators = 'f';
+  } elsif ($options->{F} or $indicators eq 'classify') {
+    $indicators = 'F';
+  } elsif (defined $options->{'indicator-style'}) {
+    croak "Unknown indicator-style option '$indicators'; must be 'none', 'slash', 'file-type', or 'classify'";
+  }
+
+  if (length $indicators) {
+    foreach my $entry (@entries) {
+      my $mode = _stat($entry, $dir, \%stat)->mode;
+      if (S_ISDIR($mode)) {
+        $entry .= '/';
+      } elsif ($indicators eq 'f' or $indicators eq 'F') {
+        if (S_ISLNK($mode)) {
+          $entry .= '@';
+        } elsif (S_ISSOCK($mode)) {
+          $entry .= '=';
+        } elsif (S_ISFIFO($mode)) {
+          $entry .= '|';
+        } elsif ($indicators eq 'F' and $mode & S_IXUSR) {
+          $entry .= '*';
+        }
+      }
+    }
+  }
+
   return @entries;
 }
 
 sub _stat {
   my ($entry, $dir, $cache) = @_;
+  croak "Cannot lstat empty filename" unless defined $entry and length $entry;
   return $cache->{$entry} if exists $cache->{$entry};
   my $path = File::Spec->catfile($dir, $entry);
-  my $stat = stat $path;
+  my $stat = lstat $path;
   unless ($stat) { # try as a subdirectory
     $path = File::Spec->catdir($dir, $entry);
-    $stat = stat $path;
+    $stat = lstat $path;
   }
-  croak "Failed to stat '$path': $!" unless $stat;
+  croak "Failed to lstat '$path': $!" unless $stat;
   return $cache->{$entry} = $stat;
 }
 
@@ -199,6 +232,18 @@ Sort by ctime (change time) in seconds since the epoch.
 
 Equivalent to passing C<all> and setting C<sort> to C<none>.
 
+=item F
+
+=item classify
+
+Append classification indicators to the end of file and directory names.
+Equivalent to C<< 'indicator-style' => 'classify' >>.
+
+=item file-type
+
+Append file-type indicators to the end of file and directory names. Equivalent
+to C<< 'indicator-style' => 'file-type' >>.
+
 =item group-directories-first
 
 Return directories then files. The C<sort> algorithm will be applied within
@@ -214,6 +259,27 @@ C<a>/C<all> or C<A>/C<almost-all>.
 =item ignore
 
 Omit files and directories matching given L<Text::Glob> pattern.
+
+=item indicator-style
+
+Append indicators to the end of filenames. Recognized styles are: C<none>
+(default), C<slash> (appends C</> to directories), C<file-type> (appends all of
+the below indicators except C<*>), and C<classify> (appends all of the below
+indicators).
+
+  / directory
+  @ symbolic link
+  = socket
+  | named pipe (FIFO)
+  * executable
+
+Use of indicator types other than C<slash> will render the resulting filenames
+suitable only for display due to the extra characters.
+
+=item p
+
+Append C</> to the end of directory names. Equivalent to
+C<< 'indicator-style' => 'slash' >>.
 
 =item r
 

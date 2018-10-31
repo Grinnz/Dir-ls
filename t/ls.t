@@ -112,4 +112,8 @@ my @dirs_first_reverse_list = ls $testdir, {'almost-all' => 1, 'group-directorie
 my @dirs_first_reverse_sort = ('test.d', reverse grep { !m/^\.\.?\z/ and $_ ne 'test.d' } @sorted_byname);
 is_deeply \@dirs_first_reverse_list, \@dirs_first_reverse_sort, 'group directories first with reverse sort';
 
+my @indicators_list = ls $testdir, {'indicator-style' => 'slash'};
+my @indicators_sort = map { $_ eq 'test.d' ? "$_/" : $_ } grep { !m/^\./ } @sorted_byname;
+is_deeply \@indicators_list, \@indicators_sort, 'directory indicators added';
+
 done_testing;
