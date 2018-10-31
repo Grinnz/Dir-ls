@@ -232,16 +232,16 @@ Omit files and directories ending in C<~>.
 
 Sort by ctime (change time) in seconds since the epoch.
 
-=item f
-
-Equivalent to passing C<all> and setting C<sort> to C<none>.
-
 =item F
 
 =item classify
 
 Append classification indicators to the end of file and directory names.
 Equivalent to C<< 'indicator-style' => 'classify' >>.
+
+=item f
+
+Equivalent to passing C<all> and setting C<sort> to C<none>.
 
 =item file-type
 
@@ -266,10 +266,10 @@ Omit files and directories matching given L<Text::Glob> pattern.
 
 =item indicator-style
 
-Append indicators to the end of filenames. Recognized styles are: C<none>
-(default), C<slash> (appends C</> to directories), C<file-type> (appends all of
-the below indicators except C<*>), and C<classify> (appends all of the below
-indicators).
+Append indicators to the end of filenames according to the specified style.
+Recognized styles are: C<none> (default), C<slash> (appends C</> to
+directories), C<file-type> (appends all of the below indicators except C<*>),
+and C<classify> (appends all of the below indicators).
 
   / directory
   @ symbolic link
