@@ -45,9 +45,27 @@ sub ls {
     and (defined $ignore_pattern ? !m/$ignore_pattern/ : 1)
   } @entries;
 
-  local $options->{sort} = '' unless defined $options->{sort};
-  unless ($options->{U} or $options->{sort} eq 'none' or $options->{f}) {
-    if ($options->{v} or $options->{sort} eq 'version') {
+  my $sort = $options->{sort} || '';
+  if ($options->{U} or $options->{f} or $sort eq 'none') {
+    $sort = 'U';
+  } elsif ($options->{v} or $sort eq 'version') {
+    $sort = 'v';
+  } elsif ($options->{S} or $sort eq 'size') {
+    $sort = 'S';
+  } elsif ($options->{X} or $sort eq 'extension') {
+    $sort = 'X';
+  } elsif ($options->{t} or $sort eq 'time') {
+    $sort = 't';
+  } elsif ($options->{c}) {
+    $sort = 'c';
+  } elsif ($options->{u}) {
+    $sort = 'u';
+  } elsif (defined $options->{sort}) {
+    croak "Unknown sort option '$sort'; must be 'none', 'size', 'time', 'version', or 'extension'";
+  }
+
+  unless ($sort eq 'U') {
+    if ($sort eq 'v') {
       @entries = fileversort @entries;
     } else {
       {
@@ -55,25 +73,23 @@ sub ls {
         use locale;
         @entries = sort @entries;
       }
-      
-      if ($options->{S} or $options->{sort} eq 'size') {
+
+      if ($sort eq 'S') {
         my @sizes = map { _stat_sorter($dir, $_, 7) } @entries;
         @entries = @entries[sort { $sizes[$b] <=> $sizes[$a] } 0..$#entries];
-      } elsif ($options->{X} or $options->{sort} eq 'extension') {
+      } elsif ($sort eq 'X') {
         my @extensions = map { _ext_sorter($_) } @entries;
         use locale;
         @entries = @entries[sort { $extensions[$a] cmp $extensions[$b] } 0..$#entries];
-      } elsif ($options->{t} or $options->{sort} eq 'time') {
+      } elsif ($sort eq 't') {
         my @mtimes = map { _stat_sorter($dir, $_, 9) } @entries;
         @entries = @entries[sort { $mtimes[$a] <=> $mtimes[$b] } 0..$#entries];
-      } elsif ($options->{c}) {
+      } elsif ($sort eq 'c') {
         my @ctimes = map { _stat_sorter($dir, $_, 10) } @entries;
         @entries = @entries[sort { $ctimes[$a] <=> $ctimes[$b] } 0..$#entries];
-      } elsif ($options->{u}) {
+      } elsif ($sort eq 'u') {
         my @atimes = map { _stat_sorter($dir, $_, 8) } @entries;
         @entries = @entries[sort { $atimes[$a] <=> $atimes[$b] } 0..$#entries];
-      } elsif (length $options->{sort}) {
-        croak "Unknown sort option '$options->{sort}'; must be 'none', 'size', 'time', 'version', or 'extension'";
       }
     }
 
