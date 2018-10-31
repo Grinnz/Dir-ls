@@ -2,6 +2,7 @@
   - Fix default sort when the configured locale does not have an alphanumeric collation (e.g. LC_COLLATE=C)
   - Add B/ignore-backups option
   - Add group-directories-first option
+  - Add hide and I/ignore options
 
 0.005     2018-10-24 01:10:27 EDT
   - Do tilde expansion with Path::ExpandTilde instead of Path::Tiny

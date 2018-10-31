@@ -68,6 +68,30 @@ my @no_backups_list = ls $testdir, {all => 1, 'ignore-backups' => 1};
 my @no_backups_sort = grep { !m/~\z/ } @sorted_byname;
 is_deeply \@no_backups_list, \@no_backups_sort, 'ignore-backups list correct';
 
+my @hide_list = ls $testdir, {hide => 'test*.T??'};
+my @hide_sort = grep { !m/^\./ and !m/^test.*\.T..\z/ } @sorted_byname;
+is_deeply \@hide_list, \@hide_sort, 'hide list correct';
+
+my @hide_all_list = ls $testdir, {all => 1, hide => 'test*'};
+my @hide_all_sort = @sorted_byname;
+is_deeply \@hide_all_list, \@hide_all_sort, 'hide overriden by all';
+
+my @hide_almost_all_list = ls $testdir, {'almost-all' => 1, hide => 'test*'};
+my @hide_almost_all_sort = grep { !m/^\.\.?\z/ } @sorted_byname;
+is_deeply \@hide_almost_all_list, \@hide_almost_all_sort, 'hide overriden by almost-all';
+
+my @ignore_list = ls $testdir, {ignore => 'test[15]'};
+my @ignore_sort = grep { !m/^\./ and !m/^test[15]\z/ } @sorted_byname;
+is_deeply \@ignore_list, \@ignore_sort, 'ignore list correct';
+
+my @ignore_all_list = ls $testdir, {all => 1, ignore => '*.*'};
+my @ignore_all_sort = grep { !m/^[^.]+\./ } @sorted_byname;
+is_deeply \@ignore_all_list, \@ignore_all_sort, 'ignore with all';
+
+my @ignore_almost_all_list = ls $testdir, {'almost-all' => 1, ignore => 'test?.{out,jpg}'};
+my @ignore_almost_all_sort = grep { !m/^\.\.?\z/ and !m/^test.\.(out|jpg)\z/ } @sorted_byname;
+is_deeply \@ignore_almost_all_list, \@ignore_almost_all_sort, 'ignore with almost all';
+
 my @by_ext_list = ls $testdir, {'almost-all' => 1, sort => 'extension'};
 my @by_ext_sort = grep { !m/^\.\.?\z/ } @sorted_byext;
 is_deeply \@by_ext_list, \@by_ext_sort, 'extension sorted list correct';

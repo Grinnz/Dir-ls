@@ -8,6 +8,8 @@ use Fcntl 'S_ISDIR';
 use File::Spec;
 use Path::ExpandTilde;
 use Sort::filevercmp 'fileversort';
+use Text::Glob 'glob_to_regex';
+
 use sort 'stable';
 
 our $VERSION = '0.006';
@@ -33,9 +35,14 @@ sub ls {
   my $show_all = !!($options->{a} or $options->{all} or $options->{f});
   my $show_almost_all = !!($options->{A} or $options->{'almost-all'});
   my $skip_backup = !!($options->{B} or $options->{'ignore-backups'});
+  my $hide_pattern = defined $options->{hide} ? glob_to_regex($options->{hide}) : undef;
+  my $ignore_glob = defined $options->{I} ? $options->{I} : $options->{ignore};
+  my $ignore_pattern = defined $ignore_glob ? glob_to_regex($ignore_glob) : undef;
   @entries = grep {
-    ($show_all ? 1 : $show_almost_all ? ($_ ne '.' and $_ ne '..') : !m/^\./)
+    ($show_all ? 1 : $show_almost_all ? ($_ ne '.' and $_ ne '..') :
+      (!m/^\./ and defined $hide_pattern ? !m/$hide_pattern/ : 1))
     and ($skip_backup ? !m/~\z/ : 1)
+    and (defined $ignore_pattern ? !m/$ignore_pattern/ : 1)
   } @entries;
 
   local $options->{sort} = '' unless defined $options->{sort};
@@ -173,8 +180,19 @@ Equivalent to passing C<all> and setting C<sort> to C<none>.
 
 =item group-directories-first
 
-Returns directories then files. The C<sort> algorithm will be applied within
+Return directories then files. The C<sort> algorithm will be applied within
 these groupings, but C<U> or C<< sort => 'none' >> will disable the grouping.
+
+=item hide
+
+Omit files and directories matching given L<Text::Glob> pattern. Overriden by
+C<a>/C<all> or C<A>/C<almost-all>.
+
+=item I
+
+=item ignore
+
+Omit files and directories matching given L<Text::Glob> pattern.
 
 =item r
 
