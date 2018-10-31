@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Carp 'croak';
 use Exporter 'import';
+use Fcntl 'S_ISDIR';
 use File::Spec;
 use Path::ExpandTilde;
 use Sort::filevercmp 'fileversort';
@@ -70,6 +71,11 @@ sub ls {
     }
 
     @entries = reverse @entries if $options->{r} or $options->{reverse};
+
+    if ($options->{'group-directories-first'}) {
+      my @isdir = map { S_ISDIR(_stat_sorter($dir, $_, 2)) } @entries;
+      @entries = @entries[sort { $isdir[$b] <=> $isdir[$a] } 0..$#entries];
+    }
   }
 
   return @entries;
@@ -164,6 +170,11 @@ Sort by ctime (change time) in seconds since the epoch.
 =item f
 
 Equivalent to passing C<all> and setting C<sort> to C<none>.
+
+=item group-directories-first
+
+Returns directories then files. The C<sort> algorithm will be applied within
+these groupings, but C<U> or C<< sort => 'none' >> will disable the grouping.
 
 =item r
 

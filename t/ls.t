@@ -80,4 +80,12 @@ my @by_version_list = ls $testdir, {'almost-all' => 1, sort => 'version'};
 my @by_version_sort = sort filevercmp @testfiles, 'test.d';
 is_deeply \@by_version_list, \@by_version_sort, 'version sorted list correct';
 
+my @dirs_first_list = ls $testdir, {'almost-all' => 1, 'group-directories-first' => 1};
+my @dirs_first_sort = ('test.d', grep { !m/^\.\.?\z/ and $_ ne 'test.d' } @sorted_byname);
+is_deeply \@dirs_first_list, \@dirs_first_sort, 'group directories first';
+
+my @dirs_first_reverse_list = ls $testdir, {'almost-all' => 1, 'group-directories-first' => 1, reverse => 1};
+my @dirs_first_reverse_sort = ('test.d', reverse grep { !m/^\.\.?\z/ and $_ ne 'test.d' } @sorted_byname);
+is_deeply \@dirs_first_reverse_list, \@dirs_first_reverse_sort, 'group directories first with reverse sort';
+
 done_testing;
