@@ -40,9 +40,12 @@
          "requires" : {
             "Carp" : "0",
             "Exporter" : "5.57",
+            "Fcntl" : "0",
             "File::Spec" : "0",
+            "File::stat" : "0",
             "Path::ExpandTilde" : "0",
             "Sort::filevercmp" : "0",
+            "Text::Glob" : "0",
             "locale" : "0",
             "perl" : "5.008001",
             "sort" : "0"
@@ -64,7 +67,7 @@
    "provides" : {
       "Dir::ls" : {
          "file" : "lib/Dir/ls.pm",
-         "version" : "0.006"
+         "version" : "1.000"
       }
    },
    "release_status" : "stable",
@@ -79,7 +82,7 @@
          "web" : "https://github.com/Grinnz/Dir-ls"
       }
    },
-   "version" : "0.006",
+   "version" : "1.000",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.028000"
@@ -268,7 +271,7 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "0.006",
+                  "tag" : "1.000",
                   "tag_format" : "%v",
                   "tag_message" : "%v"
                },

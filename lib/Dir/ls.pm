@@ -13,7 +13,7 @@ use Text::Glob 'glob_to_regex';
 
 use sort 'stable';
 
-our $VERSION = '0.006';
+our $VERSION = '1.000';
 
 our @EXPORT = 'ls';
 
