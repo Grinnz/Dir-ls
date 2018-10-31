@@ -18,14 +18,18 @@ our $VERSION = '1.000';
 our @EXPORT = 'ls';
 
 sub ls {
-  my ($dir, $options);
+  my ($dir, $opt);
   if (ref $_[0] eq 'HASH') {
-    ($options) = @_;
+    ($opt) = @_;
   } else {
-    ($dir, $options) = @_;
+    ($dir, $opt) = @_;
   }
   $dir = '.' unless defined $dir and length $dir;
-  $options ||= {};
+  my %options = %{$opt || {}};
+  foreach my $option (sort grep { m/^-/ } keys %options) {
+    (my $name = $option) =~ s/^-+//;
+    $options{$name} = delete $options{$option};
+  }
 
   $dir = expand_tilde($dir); # do homedir expansion
 
@@ -33,11 +37,11 @@ sub ls {
   my @entries = readdir $dh;
   closedir $dh or croak "Failed to close directory '$dir': $!";
 
-  my $show_all = !!($options->{a} or $options->{all} or $options->{f});
-  my $show_almost_all = !!($options->{A} or $options->{'almost-all'});
-  my $skip_backup = !!($options->{B} or $options->{'ignore-backups'});
-  my $hide_pattern = defined $options->{hide} ? glob_to_regex($options->{hide}) : undef;
-  my $ignore_glob = defined $options->{I} ? $options->{I} : $options->{ignore};
+  my $show_all = !!($options{a} or $options{all} or $options{f});
+  my $show_almost_all = !!($options{A} or $options{'almost-all'});
+  my $skip_backup = !!($options{B} or $options{'ignore-backups'});
+  my $hide_pattern = defined $options{hide} ? glob_to_regex($options{hide}) : undef;
+  my $ignore_glob = defined $options{I} ? $options{I} : $options{ignore};
   my $ignore_pattern = defined $ignore_glob ? glob_to_regex($ignore_glob) : undef;
   @entries = grep {
     ($show_all ? 1 : $show_almost_all ? ($_ ne '.' and $_ ne '..') :
@@ -46,22 +50,22 @@ sub ls {
     and (defined $ignore_pattern ? !m/$ignore_pattern/ : 1)
   } @entries;
 
-  my $sort = $options->{sort} || '';
-  if ($options->{U} or $options->{f} or $sort eq 'none') {
+  my $sort = $options{sort} || '';
+  if ($options{U} or $options{f} or $sort eq 'none') {
     $sort = 'U';
-  } elsif ($options->{v} or $sort eq 'version') {
+  } elsif ($options{v} or $sort eq 'version') {
     $sort = 'v';
-  } elsif ($options->{S} or $sort eq 'size') {
+  } elsif ($options{S} or $sort eq 'size') {
     $sort = 'S';
-  } elsif ($options->{X} or $sort eq 'extension') {
+  } elsif ($options{X} or $sort eq 'extension') {
     $sort = 'X';
-  } elsif ($options->{t} or $sort eq 'time') {
+  } elsif ($options{t} or $sort eq 'time') {
     $sort = 't';
-  } elsif ($options->{c}) {
+  } elsif ($options{c}) {
     $sort = 'c';
-  } elsif ($options->{u}) {
+  } elsif ($options{u}) {
     $sort = 'u';
-  } elsif (defined $options->{sort}) {
+  } elsif (defined $options{sort}) {
     croak "Unknown sort option '$sort'; must be 'none', 'size', 'time', 'version', or 'extension'";
   }
 
@@ -96,25 +100,25 @@ sub ls {
       }
     }
 
-    @entries = reverse @entries if $options->{r} or $options->{reverse};
+    @entries = reverse @entries if $options{r} or $options{reverse};
 
-    if ($options->{'group-directories-first'}) {
+    if ($options{'group-directories-first'}) {
       my ($dirs, $files) = ([], []);
       push @{S_ISDIR(_stat($_, $dir, \%stat)->mode) ? $dirs : $files}, $_ for @entries;
       @entries = (@$dirs, @$files);
     }
   }
 
-  my $indicators = $options->{'indicator-style'} || '';
+  my $indicators = $options{'indicator-style'} || '';
   if ($indicators eq 'none') {
     $indicators = '';
-  } elsif ($options->{p} or $indicators eq 'slash') {
+  } elsif ($options{p} or $indicators eq 'slash') {
     $indicators = 'p';
-  } elsif ($indicators eq 'file-type') {
+  } elsif ($options{'file-type'} or $indicators eq 'file-type') {
     $indicators = 'f';
-  } elsif ($options->{F} or $indicators eq 'classify') {
+  } elsif ($options{F} or $options{classify} or $indicators eq 'classify') {
     $indicators = 'F';
-  } elsif (defined $options->{'indicator-style'}) {
+  } elsif (defined $options{'indicator-style'}) {
     croak "Unknown indicator-style option '$indicators'; must be 'none', 'slash', 'file-type', or 'classify'";
   }
 
@@ -173,7 +177,7 @@ Dir::ls - List the contents of a directory
   
   print "$_\n" for ls; # defaults to current working directory
   
-  print "$_: ", -s "/foo/bar/$_", "\n" for ls '/foo/bar', {all => 1, sort => 'size'};
+  print "$_: ", -s "/foo/bar/$_", "\n" for ls '/foo/bar', {-a => 1, sort => 'size'};
 
 =head1 DESCRIPTION
 
@@ -202,7 +206,7 @@ By default, hidden files and directories (those starting with C<.>) are
 omitted, and the results are sorted by name according to the current locale
 (see L<perllocale> for more information).
 
-Accepts the following options:
+Accepts the following options (any prefixed hyphens are ignored):
 
 =over 2
 

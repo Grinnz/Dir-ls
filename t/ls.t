@@ -72,11 +72,11 @@ my @hide_list = ls $testdir, {hide => 'test*.T??'};
 my @hide_sort = grep { !m/^\./ and !m/^test.*\.T..\z/ } @sorted_byname;
 is_deeply \@hide_list, \@hide_sort, 'hide list correct';
 
-my @hide_all_list = ls $testdir, {all => 1, hide => 'test*'};
+my @hide_all_list = ls $testdir, {a => 1, hide => 'test*'};
 my @hide_all_sort = @sorted_byname;
 is_deeply \@hide_all_list, \@hide_all_sort, 'hide overriden by all';
 
-my @hide_almost_all_list = ls $testdir, {'almost-all' => 1, hide => 'test*'};
+my @hide_almost_all_list = ls $testdir, {A => 1, hide => 'test*'};
 my @hide_almost_all_sort = grep { !m/^\.\.?\z/ } @sorted_byname;
 is_deeply \@hide_almost_all_list, \@hide_almost_all_sort, 'hide overriden by almost-all';
 
@@ -84,11 +84,11 @@ my @ignore_list = ls $testdir, {ignore => 'test[15]'};
 my @ignore_sort = grep { !m/^\./ and !m/^test[15]\z/ } @sorted_byname;
 is_deeply \@ignore_list, \@ignore_sort, 'ignore list correct';
 
-my @ignore_all_list = ls $testdir, {all => 1, ignore => '*.*'};
+my @ignore_all_list = ls $testdir, {-a => 1, '--ignore' => '*.*'};
 my @ignore_all_sort = grep { !m/^[^.]+\./ } @sorted_byname;
 is_deeply \@ignore_all_list, \@ignore_all_sort, 'ignore with all';
 
-my @ignore_almost_all_list = ls $testdir, {'almost-all' => 1, ignore => 'test?.{out,jpg}'};
+my @ignore_almost_all_list = ls $testdir, {-A => 1, ignore => 'test?.{out,jpg}'};
 my @ignore_almost_all_sort = grep { !m/^\.\.?\z/ and !m/^test.\.(out|jpg)\z/ } @sorted_byname;
 is_deeply \@ignore_almost_all_list, \@ignore_almost_all_sort, 'ignore with almost all';
 
@@ -112,7 +112,7 @@ my @dirs_first_reverse_list = ls $testdir, {'almost-all' => 1, 'group-directorie
 my @dirs_first_reverse_sort = ('test.d', reverse grep { !m/^\.\.?\z/ and $_ ne 'test.d' } @sorted_byname);
 is_deeply \@dirs_first_reverse_list, \@dirs_first_reverse_sort, 'group directories first with reverse sort';
 
-my @indicators_list = ls $testdir, {'indicator-style' => 'slash'};
+my @indicators_list = ls $testdir, {-p => 1};
 my @indicators_sort = map { $_ eq 'test.d' ? "$_/" : $_ } grep { !m/^\./ } @sorted_byname;
 is_deeply \@indicators_list, \@indicators_sort, 'directory indicators added';
 
