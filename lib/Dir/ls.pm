@@ -6,6 +6,7 @@ use Carp 'croak';
 use Exporter 'import';
 use Fcntl 'S_ISDIR';
 use File::Spec;
+use File::stat;
 use Path::ExpandTilde;
 use Sort::filevercmp 'fileversort';
 use Text::Glob 'glob_to_regex';
@@ -64,6 +65,8 @@ sub ls {
     croak "Unknown sort option '$sort'; must be 'none', 'size', 'time', 'version', or 'extension'";
   }
 
+  my %stat;
+
   unless ($sort eq 'U') {
     if ($sort eq 'v') {
       @entries = fileversort @entries;
@@ -75,20 +78,20 @@ sub ls {
       }
 
       if ($sort eq 'S') {
-        my @sizes = map { _stat_sorter($dir, $_, 7) } @entries;
+        my @sizes = map { _stat($_, $dir, \%stat)->size } @entries;
         @entries = @entries[sort { $sizes[$b] <=> $sizes[$a] } 0..$#entries];
       } elsif ($sort eq 'X') {
         my @extensions = map { _ext_sorter($_) } @entries;
         use locale;
         @entries = @entries[sort { $extensions[$a] cmp $extensions[$b] } 0..$#entries];
       } elsif ($sort eq 't') {
-        my @mtimes = map { _stat_sorter($dir, $_, 9) } @entries;
+        my @mtimes = map { _stat($_, $dir, \%stat)->mtime } @entries;
         @entries = @entries[sort { $mtimes[$a] <=> $mtimes[$b] } 0..$#entries];
       } elsif ($sort eq 'c') {
-        my @ctimes = map { _stat_sorter($dir, $_, 10) } @entries;
+        my @ctimes = map { _stat($_, $dir, \%stat)->ctime } @entries;
         @entries = @entries[sort { $ctimes[$a] <=> $ctimes[$b] } 0..$#entries];
       } elsif ($sort eq 'u') {
-        my @atimes = map { _stat_sorter($dir, $_, 8) } @entries;
+        my @atimes = map { _stat($_, $dir, \%stat)->atime } @entries;
         @entries = @entries[sort { $atimes[$a] <=> $atimes[$b] } 0..$#entries];
       }
     }
@@ -96,24 +99,26 @@ sub ls {
     @entries = reverse @entries if $options->{r} or $options->{reverse};
 
     if ($options->{'group-directories-first'}) {
-      my @isdir = map { S_ISDIR(_stat_sorter($dir, $_, 2)) } @entries;
-      @entries = @entries[sort { $isdir[$b] <=> $isdir[$a] } 0..$#entries];
+      my ($dirs, $files) = ([], []);
+      push @{S_ISDIR(_stat($_, $dir, \%stat)->mode) ? $dirs : $files}, $_ for @entries;
+      @entries = (@$dirs, @$files);
     }
   }
 
   return @entries;
 }
 
-sub _stat_sorter {
-  my ($dir, $entry, $index) = @_;
+sub _stat {
+  my ($entry, $dir, $cache) = @_;
+  return $cache->{$entry} if exists $cache->{$entry};
   my $path = File::Spec->catfile($dir, $entry);
-  my @stat = stat $path;
-  unless (@stat) { # try as a subdirectory
+  my $stat = stat $path;
+  unless ($stat) { # try as a subdirectory
     $path = File::Spec->catdir($dir, $entry);
-    @stat = stat $path;
+    $stat = stat $path;
   }
-  croak "Failed to stat '$path': $!" unless @stat;
-  return $stat[$index];
+  croak "Failed to stat '$path': $!" unless $stat;
+  return $cache->{$entry} = $stat;
 }
 
 sub _ext_sorter {
