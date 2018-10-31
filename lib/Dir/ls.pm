@@ -43,10 +43,9 @@ sub ls {
       @entries = fileversort @entries;
     } else {
       {
-        # pre-sort by alphanumeric then full name
-        my @alnum = map { _alnum_sorter($_) } @entries;
+        # pre-sort by collation
         use locale;
-        @entries = @entries[sort { $alnum[$a] cmp $alnum[$b] or $entries[$a] cmp $entries[$b] } 0..$#entries];
+        @entries = sort @entries;
       }
       
       if ($options->{S} or $options->{sort} eq 'size') {
@@ -93,13 +92,6 @@ sub _ext_sorter {
   my ($ext) = $entry =~ m/(\.[^.]*)$/;
   $ext = '' unless defined $ext;
   return $ext;
-}
-
-sub _alnum_sorter {
-  my ($entry) = @_;
-  # Only consider alphabetic, numeric, and blank characters (space + tab)
-  $entry =~ tr/a-zA-Z0-9 \t//cd;
-  return $entry;
 }
 
 1;

@@ -30,7 +30,7 @@ my (@sorted_byname, @sorted_byext);
 {
   use locale;
   # Test locale-sensitive sorting
-  @sorted_byname = sort { Dir::ls::_alnum_sorter($a) cmp Dir::ls::_alnum_sorter($b) or $a cmp $b } @testfiles, 'test.d', '.', '..';
+  @sorted_byname = sort @testfiles, 'test.d', '.', '..';
   @sorted_byext = sort { Dir::ls::_ext_sorter($a) cmp Dir::ls::_ext_sorter($b) } @sorted_byname;
 }
 
